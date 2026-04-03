@@ -52,7 +52,12 @@ const voice = createVoice({
 })
 
 // After you get audio from the mic or elsewhere:
-voice.feed({ data: audioPayload, id: segmentId })
+voice.feed({ data: wavBase64_1, id: segmentId })
+voice.feed({ data: wavBase64_2, id: segmentId })
+voice.feed({ data: wavBase64_3, id: segmentId })
+voice.feed({ data: wavBase64_4, id: segmentId_2 })
+voice.feed({ data: wavBase64_5, id: segmentId_2 })
+voice.feed({ data: wavBase64_6, id: segmentId_2 })
 ```
 
 ### Web Speech API (browser)
