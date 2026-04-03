@@ -1,19 +1,28 @@
 {
-  "name": "pkg-placeholder",
+  "name": "voice-flow",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@10.25.0",
-  "description": "_description_",
-  "author": "Anthony Fu <anthonyfu117@hotmail.com>",
+  "description": "A voice stream processing framework unrelated to the environment",
+  "author": "Hairyf <wwu710632@gmail.com>",
   "license": "MIT",
-  "funding": "https://github.com/sponsors/antfu",
-  "homepage": "https://github.com/antfu/pkg-placeholder#readme",
+  "homepage": "https://github.com/hairyf/voice-flow#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antfu/pkg-placeholder.git"
+    "url": "git+https://github.com/hairyf/voice-flow.git"
   },
-  "bugs": "https://github.com/antfu/pkg-placeholder/issues",
-  "keywords": [],
+  "bugs": "https://github.com/hairyf/voice-flow/issues",
+  "keywords": [
+    "voice",
+    "flow",
+    "stream",
+    "processing",
+    "framework",
+    "unrelated",
+    "environment",
+    "ai",
+    "audio"
+  ],
   "sideEffects": false,
   "exports": {
     ".": "./dist/index.mjs",
@@ -35,6 +44,9 @@
     "test": "vitest",
     "typecheck": "tsc",
     "prepare": "simple-git-hooks"
+  },
+  "dependencies": {
+    "@hairy/utils": "catalog:deps"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",

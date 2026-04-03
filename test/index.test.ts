@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { createVoice } from '../src/index'
 
-describe('should', () => {
-  it('exported', () => {
-    expect(1).toEqual(1)
+describe('package smoke', () => {
+  it('exports createVoice', () => {
+    expect(typeof createVoice).toBe('function')
   })
 })

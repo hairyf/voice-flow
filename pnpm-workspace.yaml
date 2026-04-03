@@ -1,14 +1,15 @@
 catalogMode: prefer
-ignoreWorkspaceRootCheck: true
-shellEmulator: true
-trustPolicy: no-downgrade
 
+ignoreWorkspaceRootCheck: true
+
+shellEmulator: true
+
+trustPolicy: no-downgrade
 packages:
   - playground
   - docs
   - packages/*
   - examples/*
-
 catalogs:
   cli:
     '@antfu/eslint-config': ^6.6.1
@@ -22,6 +23,8 @@ catalogs:
     tsx: ^4.21.0
     typescript: ^5.9.3
     vite: ^7.2.7
+  deps:
+    '@hairy/utils': ^1.51.0
   inlined:
     '@antfu/utils': ^9.3.0
   testing:
