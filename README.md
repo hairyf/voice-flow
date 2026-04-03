@@ -60,6 +60,20 @@ voice.feed({ data: wavBase64_5, id: segmentId_2 })
 voice.feed({ data: wavBase64_6, id: segmentId_2 })
 ```
 
+Register match-and-run rules on streaming text — handy for keyword interrupts or clearing the UI.
+
+```ts
+voice.addCommand({
+  match: ['stop', '停止'], // or regex or (text: string) => boolean
+  stage: 'delta',
+  stop: true, // skip further onDelta/onFinal handling when matched
+  clear: true, // pass empty string to callbacks to clear the view
+  handler: (text) => { /* side effects */ },
+})
+```
+
+`match` may be `string[]` (`includes`), `(text: string) => boolean`, or `RegExp`.
+
 ### Web Speech API (browser)
 
 Use the [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) so the browser does ASR; on each `result`, `feed` the transcript as `chunk.data` and implement `stream` to turn that payload into an async text stream (e.g. one `yield` per chunk). Requires a [secure context](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts) (HTTPS or `localhost`) and usually a user gesture before `start()`.
@@ -83,22 +97,6 @@ recognition.onresult = (event) => {
 }
 recognition.start()
 ```
-
-### Commands
-
-Register match-and-run rules on streaming text — handy for keyword interrupts or clearing the UI.
-
-```ts
-voice.addCommand({
-  match: ['stop', 'cancel'],
-  stage: 'delta',
-  stop: true, // skip further onDelta/onFinal handling when matched
-  clear: true, // pass empty string to callbacks to clear the view
-  handler: (text) => { /* side effects */ },
-})
-```
-
-`match` may be `string[]` (`includes`), `(text: string) => boolean`, or `RegExp`.
 
 ### State & concurrency
 
