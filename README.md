@@ -1,4 +1,4 @@
-# voice-flow
+# voice-flow-x
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
@@ -19,11 +19,11 @@
 ## 📦 Install
 
 ```bash
-pnpm add voice-flow
+pnpm add voice-flow-x
 ```
 
 ```bash
-npm install voice-flow
+npm install voice-flow-x
 ```
 
 ## 🚀 Usage
@@ -33,7 +33,7 @@ npm install voice-flow
 Use `createVoice` (or `new Voice`) and provide `stream`: for each `Chunk`, return the async text stream for that audio segment.
 
 ```ts
-import { createVoice } from 'voice-flow'
+import { createVoice } from 'voice-flow-x'
 
 const voice = createVoice({
   stream: async ({ data, id }) => {
@@ -80,7 +80,7 @@ voice.addCommand({
 
 ### Types
 
-Exporting from `voice-flow`: `Voice`, `createVoice`, `Chunk`, `Command`, `VoiceOptions`, `AsyncIterableStream`, and more — see [JSDocs][jsdocs-href].
+Exporting from `voice-flow-x`: `Voice`, `createVoice`, `Chunk`, `Command`, `VoiceOptions`, `AsyncIterableStream`, and more — see [JSDocs][jsdocs-href].
 
 ## 🔧 For package maintainers
 
@@ -92,13 +92,13 @@ If you use [npm Trusted Publisher](https://github.com/e18e/ecosystem-issues/issu
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/voice-flow?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/voice-flow
-[npm-downloads-src]: https://img.shields.io/npm/dm/voice-flow?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/voice-flow
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/voice-flow?style=flat&colorA=080f12&colorB=1fa669&label=minzip
-[bundle-href]: https://bundlephobia.com/result?p=voice-flow
-[license-src]: https://img.shields.io/github/license/hairyf/voice-flow.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/hairyf/voice-flow/blob/main/LICENSE
+[npm-version-src]: https://img.shields.io/npm/v/voice-flow-x?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmjs.com/package/voice-flow-x
+[npm-downloads-src]: https://img.shields.io/npm/dm/voice-flow-x?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmjs.com/package/voice-flow-x
+[bundle-src]: https://img.shields.io/bundlephobia/minzip/voice-flow-x?style=flat&colorA=080f12&colorB=1fa669&label=minzip
+[bundle-href]: https://bundlephobia.com/result?p=voice-flow-x
+[license-src]: https://img.shields.io/github/license/hairyf/voice-flow-x.svg?style=flat&colorA=080f12&colorB=1fa669
+[license-href]: https://github.com/hairyf/voice-flow-x/blob/main/LICENSE
 [jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/voice-flow
+[jsdocs-href]: https://www.jsdocs.io/package/voice-flow-x
