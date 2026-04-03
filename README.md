@@ -55,6 +55,30 @@ const voice = createVoice({
 voice.feed({ data: audioPayload, id: segmentId })
 ```
 
+### Web Speech API (browser)
+
+Use the [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) so the browser does ASR; on each `result`, `feed` the transcript as `chunk.data` and implement `stream` to turn that payload into an async text stream (e.g. one `yield` per chunk). Requires a [secure context](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts) (HTTPS or `localhost`) and usually a user gesture before `start()`.
+
+```ts
+import { createVoice } from 'voice-flow-x'
+
+const SpeechRecognition = window.SpeechRecognition ?? window.webkitSpeechRecognition
+
+const voice = createVoice({
+  stream: async ({ data, id }) => { /* request asr api and return the async text stream */ },
+  onDelta: (text) => { /* UI */ },
+  onFinal: (text) => { /* committed line */ },
+  finalIdleMs: 2000,
+})
+
+const recognition = new SpeechRecognition()
+recognition.onresult = (event) => {
+  const result = event.results[0][0].transcript
+  voice.feed({ data: result, id: event.resultIndex })
+}
+recognition.start()
+```
+
 ### Commands
 
 Register match-and-run rules on streaming text — handy for keyword interrupts or clearing the UI.

@@ -6,12 +6,12 @@
   "description": "A voice stream processing framework unrelated to the environment",
   "author": "Hairyf <wwu710632@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/hairyf/voice-flow-x#readme",
+  "homepage": "https://github.com/hairyf/voice-flow#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hairyf/voice-flow-x.git"
+    "url": "git+https://github.com/hairyf/voice-flow.git"
   },
-  "bugs": "https://github.com/hairyf/voice-flow-x/issues",
+  "bugs": "https://github.com/hairyf/voice-flow/issues",
   "keywords": [
     "voice",
     "flow",
