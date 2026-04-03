@@ -6,19 +6,89 @@
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-A voice stream processing framework unrelated to the environment
+🎙️ **Environment-agnostic voice stream processing** — a small, testable API for consuming **audio chunks → async ASR text streams**, merging segments, debouncing deltas, and matching commands.
 
-## Note for Developers
+- 🌊 **Streaming-first** — `Voice` consumes incremental recognition as `AsyncIterable` / `ReadableStream`, handles segment switches and candidate merging
+- 🎯 **UI-friendly** — dedupes snapshots, short-window throttling, and a recent-output window to tame ASR flicker
+- 🧩 **Pluggable commands** — match on `delta` / `final` with strings, predicates, or regex; `stop`, `clear`, and custom `handler`
+- 📘 **TypeScript-native** — generic `Chunk<T>` and `VoiceOptions<T>` for any audio payload type
 
-This starter recommands using [npm Trusted Publisher](https://github.com/e18e/ecosystem-issues/issues/201), where the release is done on CI to ensure the security of the packages.
+> 📌 **Note**
+> This library is only a **stream + text state machine**. It does **not** ship recording, WebSocket, or a specific ASR SDK — wire `stream` to your service.
 
-To do so, you need to run `pnpm publish` manually for the very first time to create the package on npm, and then go to `https://www.npmjs.com/package/<your-package-name>/access` to set the connection to your GitHub repo.
+## 📦 Install
 
-Then for the future releases, you can run `pnpm run release` to do the release and the GitHub Actions will take care of the release process.
+```bash
+pnpm add voice-flow
+```
 
-## License
+```bash
+npm install voice-flow
+```
 
-[MIT](./LICENSE) License © [Anthony Fu](https://github.com/hairyf)
+## 🚀 Usage
+
+### Minimal example
+
+Use `createVoice` (or `new Voice`) and provide `stream`: for each `Chunk`, return the async text stream for that audio segment.
+
+```ts
+import { createVoice } from 'voice-flow'
+
+const voice = createVoice({
+  stream: async ({ data, id }) => {
+    // Your ASR: return AsyncIterable<string> or ReadableStream<string>
+    return yourAsrStream(data, id)
+  },
+  onDelta: (text) => {
+    // Debounced full snapshot (good for the current recognition line)
+  },
+  onFinal: (text) => {
+    // Fires when `done()` completes (e.g. silence timeout with `finalIdleMs`, or manual `done()`)
+  },
+  deltaIdleMs: 50, // debounce for onDelta, default 50
+  finalIdleMs: 2000, // optional: silence window before auto-finalize when no new chunk
+  debug: false,
+})
+
+// After you get audio from the mic or elsewhere:
+voice.feed({ data: audioPayload, id: segmentId })
+```
+
+### Commands
+
+Register match-and-run rules on streaming text — handy for keyword interrupts or clearing the UI.
+
+```ts
+voice.addCommand({
+  match: ['stop', 'cancel'],
+  stage: 'delta',
+  stop: true, // skip further onDelta/onFinal handling when matched
+  clear: true, // pass empty string to callbacks to clear the view
+  handler: (text) => { /* side effects */ },
+})
+```
+
+`match` may be `string[]` (`includes`), `(text: string) => boolean`, or `RegExp`.
+
+### State & concurrency
+
+- `feed(chunk)` — queued processing; continues with the next chunk when the current run finishes
+- `lock(ms)` / `unlock()` — pause processing; auto-unlock after timeout; `unlock` clears internal text state
+- `finalize()` — when `finalIdleMs` is set, schedules `done()` after silence (no new audio)
+- `clear()` — resets prefix, merged text, and dedupe window (often via internal or `onClear` paths)
+
+### Types
+
+Exporting from `voice-flow`: `Voice`, `createVoice`, `Chunk`, `Command`, `VoiceOptions`, `AsyncIterableStream`, and more — see [JSDocs][jsdocs-href].
+
+## 🔧 For package maintainers
+
+If you use [npm Trusted Publisher](https://github.com/e18e/ecosystem-issues/issues/201), run `pnpm publish` once locally to create the package and link the GitHub repo on npm; later, `pnpm run release` can drive releases via CI. See npm docs and scripts in this repo.
+
+## 📄 License
+
+[MIT](./LICENSE) License © [Hairyf](https://github.com/hairyf)
 
 <!-- Badges -->
 
