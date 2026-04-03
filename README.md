@@ -64,8 +64,8 @@ Register match-and-run rules on streaming text — handy for keyword interrupts 
 
 ```ts
 voice.addCommand({
-  match: ['stop', '停止'], // or regex or (text: string) => boolean
-  stage: 'delta',
+  match: ['stop', '停止'],
+  stage: 'delta', // 'delta' or 'final'
   stop: true, // skip further onDelta/onFinal handling when matched
   clear: true, // pass empty string to callbacks to clear the view
   handler: (text) => { /* side effects */ },
