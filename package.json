@@ -37,6 +37,9 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
+    "docs:build": "pnpm --filter @voice-flow/docs docs:build",
+    "docs:dev": "pnpm --filter @voice-flow/docs docs:dev",
+    "docs:preview": "pnpm --filter @voice-flow/docs docs:preview",
     "lint": "eslint",
     "prepublishOnly": "nr build",
     "release": "bumpp",

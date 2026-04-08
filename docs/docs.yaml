@@ -1,0 +1,23 @@
+name: Voice Flow
+url: https://voice-flow.dev
+description: Environment-agnostic voice stream processing framework.
+
+theme:
+  title: Voice Flow
+  description: Build reliable voice streaming workflows in TypeScript.
+
+landing:
+  hero:
+    title: Voice Flow
+    description: Environment-agnostic voice stream processing for AI and audio apps.
+    links:
+      - label: Get Started
+        icon: i-lucide-rocket
+        to: /#quick-start
+      - label: GitHub
+        icon: i-simple-icons-github
+        to: https://github.com/hairyf/voice-flow
+
+navigation:
+  - title: Home
+    to: /

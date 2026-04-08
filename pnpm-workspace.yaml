@@ -4,12 +4,14 @@ ignoreWorkspaceRootCheck: true
 
 shellEmulator: true
 
-trustPolicy: no-downgrade
 packages:
   - playground
   - docs
   - packages/*
   - examples/*
+patchedDependencies:
+  md4w@0.2.7: patches/md4w@0.2.7.patch
+  undocs: patches/undocs.patch
 catalogs:
   cli:
     '@antfu/eslint-config': ^6.6.1
@@ -25,6 +27,9 @@ catalogs:
     vite: ^7.2.7
   deps:
     '@hairy/utils': ^1.51.0
+  docs:
+    nuxt: 4.3.0
+    undocs: ^0.4.15
   inlined:
     '@antfu/utils': ^9.3.0
   testing:

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "undocs": {
+      "source": "hairyf/skills",
+      "sourceType": "github",
+      "computedHash": "5bba38c6c2446cf6b8a30b5e7fc436174444dc7dfb6f1cbaf0a5cb288d252a97"
+    }
+  }
+}

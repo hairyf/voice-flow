@@ -1,0 +1,14 @@
+{
+  "name": "@voice-flow/docs",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "docs:build": "undocs build",
+    "docs:dev": "undocs dev",
+    "docs:preview": "undocs preview"
+  },
+  "devDependencies": {
+    "nuxt": "catalog:docs",
+    "undocs": "catalog:docs"
+  }
+}
