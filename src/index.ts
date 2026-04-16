@@ -16,12 +16,12 @@ export interface Command {
   match: string[] | ((text: string) => boolean) | RegExp
   /** 阶段：delta 增量文本，final 最终文本 */
   stage: 'delta' | 'final'
-  /** 是否停止后续处理 */
+  /** 是否重置处理并清空状态 */
+  reset?: boolean
+  /** 是否防止后续处理 */
   stop?: boolean
-  /** 是否清空 delta 状态 */
-  clear?: boolean
   /** 处理函数 */
-  handler?: (text: string) => any
+  handler?: (text: string) => any | Promise<any>
 }
 
 export interface VoiceOptions<T> {
@@ -29,7 +29,6 @@ export interface VoiceOptions<T> {
 
   onDelta?: (delta: string) => void
   onFinal?: (final: string) => void
-
   onClear?: Fn<void | Promise<void>>
 
   finalIdleMs?: number
@@ -47,7 +46,7 @@ export class Voice<T> {
   processing = false
 
   /** 上一音频 chunk 的 segmentId，用于检测新段 */
-  segmentId = undefined as number | undefined
+  segmentId?: number
 
   // 上一次的 stripped
   stripped = ''
@@ -70,8 +69,8 @@ export class Voice<T> {
   locked = false
 
   // 自上次「有音频活动」起满 2s 后 finalize（任意 chunk 到达都会重置）
-  doneTimer = null as ReturnType<typeof setTimeout> | null
-  lockTimer = null as ReturnType<typeof setTimeout> | null
+  doneTimer?: NodeJS.Timeout
+  lockTimer?: NodeJS.Timeout
 
   private onDelta: (delta: string) => void
   private onFinal: (final: string) => void
@@ -84,28 +83,47 @@ export class Voice<T> {
   constructor(options: VoiceOptions<T>) {
     this.onDelta = debounce(
       (delta: string) => {
+        if (this.locked)
+          return
+
         this.delta = delta
         this.options.debug && console.log('[voice] Delta: ', delta)
+
         const command = this.executeCommands(delta, 'delta')
+
+        if (command?.reset) {
+          clearTimeout(this.doneTimer)
+          this.clear()
+          return
+        }
+
         if (command?.stop)
           return
-        this.options.onDelta?.(command?.clear ? '' : delta)
+
+        this.options.onDelta?.(delta)
       },
       options.deltaIdleMs || 50,
     )
 
     this.onFinal = (final: string) => {
+      if (this.locked)
+        return
+
       this.final = final
       this.options.debug && console.log('[voice] Final: ', final)
 
       const command = this.executeCommands(final, 'final')
 
-      if (command?.stop)
+      if (command?.reset) {
+        clearTimeout(this.doneTimer)
+        this.clear()
         return
-      this.options.onFinal?.(command?.clear ? '' : final)
+      }
+
+      this.options.onFinal?.(final)
     }
 
-    this.onClear = () => this.options.onClear?.()
+    this.onClear = debounce(() => this.options.onClear?.())
 
     this.options = options
   }
@@ -128,7 +146,7 @@ export class Voice<T> {
    * 清空状态
    */
   async clear() {
-    await this.onClear()
+    this.options.debug && console.log('[voice] Clear ')
     this.stripped = ''
     this.prefix = ''
     this.merged = ''
@@ -136,6 +154,7 @@ export class Voice<T> {
     this.snapshot = ''
     this.recent = []
     this.lastat = 0
+    await this.onClear()
   }
 
   /**
@@ -143,9 +162,10 @@ export class Voice<T> {
    */
   lock(timeout: number = 1000) {
     this.locked = true
+    this.options.debug && console.log('[voice] Lock handler')
     if (!timeout)
       return
-    this.lockTimer && clearTimeout(this.lockTimer)
+    clearTimeout(this.lockTimer)
     this.lockTimer = setTimeout(() => void this.unlock(), timeout)
   }
 
@@ -153,8 +173,8 @@ export class Voice<T> {
    * 解锁处理
    */
   async unlock() {
-    await this.clear()
     this.locked = false
+    this.options.debug && console.log('[voice] Unlock handler')
   }
 
   /**
@@ -164,7 +184,7 @@ export class Voice<T> {
     this.final = this.snapshot
     this.onFinal(this.snapshot)
     await this.clear()
-    this.doneTimer = null
+    this.doneTimer = undefined
     this.lock()
   }
 
@@ -172,7 +192,7 @@ export class Voice<T> {
    * 当 finalIdleMs 启用时，无新音频 chunk 则 finalize（与「锁」无关，仅静音窗口）
    */
   finalize() {
-    this.doneTimer && clearTimeout(this.doneTimer)
+    clearTimeout(this.doneTimer)
     this.doneTimer = setTimeout(() => void this.done(), this.options.finalIdleMs)
   }
 

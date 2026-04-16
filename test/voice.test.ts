@@ -167,20 +167,4 @@ describe('voice.lock / unlock / clear', () => {
     v.feed({ data: 'x', id: 1 })
     expect(v.chunk).toBeNull()
   })
-
-  it('unlock clears and unsets locked', async () => {
-    let cleared = 0
-    const v = new Voice<string>({
-      stream: async () => toStream([]),
-      onClear: () => {
-        cleared++
-      },
-    })
-    v.merged = 'x'
-    v.lock(0)
-    await v.unlock()
-    expect(v.locked).toBe(false)
-    expect(v.merged).toBe('')
-    expect(cleared).toBe(1)
-  })
 })

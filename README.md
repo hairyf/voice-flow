@@ -46,6 +46,9 @@ const voice = createVoice({
   onFinal: (text) => {
     // Fires when `done()` completes (e.g. silence timeout with `finalIdleMs`, or manual `done()`)
   },
+  onClear: () => {
+    // clear or reset your vad recording
+  },
   deltaIdleMs: 50, // debounce for onDelta, default 50
   finalIdleMs: 2000, // optional: silence window before auto-finalize when no new chunk
   debug: false,
