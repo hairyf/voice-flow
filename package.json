@@ -1,7 +1,7 @@
 {
   "name": "voice-flow-x",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "packageManager": "pnpm@10.25.0",
   "description": "A voice stream processing framework unrelated to the environment",
   "author": "Hairyf <wwu710632@gmail.com>",
