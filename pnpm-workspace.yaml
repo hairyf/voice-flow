@@ -3,15 +3,24 @@ catalogMode: prefer
 ignoreWorkspaceRootCheck: true
 
 shellEmulator: true
-
 packages:
   - playground
   - docs
   - packages/*
   - examples/*
+
 patchedDependencies:
   md4w@0.2.7: patches/md4w@0.2.7.patch
   undocs: patches/undocs.patch
+catalog:
+  '@types/react': ^19.2.15
+  '@types/react-dom': ^19.2.3
+  '@vitejs/plugin-react': ^6.0.2
+  globals: ^17.6.0
+  react: ^19.2.6
+  react-dom: ^19.2.6
+  zustand: 5.0.14
+
 catalogs:
   cli:
     '@antfu/eslint-config': ^6.6.1
@@ -39,6 +48,7 @@ catalogs:
     yaml: ^2.8.2
   types:
     '@types/node': ^25.0.1
+
 onlyBuiltDependencies:
   - esbuild
   - simple-git-hooks

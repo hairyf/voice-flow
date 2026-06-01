@@ -1,0 +1,27 @@
+{
+  "name": "playground",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "voice-flow-x": "workspace:*",
+    "zustand": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "globals": "catalog:",
+    "typescript": "catalog:cli",
+    "vite": "catalog:cli"
+  }
+}

@@ -1,0 +1,137 @@
+#voice-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  place-content: center;
+  place-items: center;
+  flex-grow: 1;
+  padding: 40px 20px;
+}
+
+#voice-demo h1 {
+  font-size: 48px;
+  margin: 0;
+}
+
+.warning {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  max-width: 500px;
+}
+
+#voice-demo .subtitle {
+  color: var(--text);
+  font-size: 18px;
+  margin-top: -16px;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn {
+  font-size: 18px;
+  padding: 12px 32px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-start {
+  color: #fff;
+  background: #22c55e;
+  border-color: #22c55e;
+}
+
+.btn-start:hover:not(:disabled) {
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+.btn-stop {
+  color: #fff;
+  background: #ef4444;
+  border-color: #ef4444;
+}
+
+.btn-stop:hover:not(:disabled) {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9ca3af;
+  transition: background 0.3s;
+}
+
+.dot-active {
+  background: #22c55e;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.output {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 8px;
+}
+
+.output-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.output-text {
+  min-height: 120px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-h);
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.output-text .interim {
+  color: var(--text);
+  opacity: 0.7;
+}
