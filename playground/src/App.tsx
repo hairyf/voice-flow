@@ -2,6 +2,8 @@ import type { Chunk } from 'voice-flow-x'
 import { createVoice } from 'voice-flow-x'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
+import { postQwenASRChatCompletions } from './apis'
+import { blobToBase64, streamASRResponse } from './utils'
 import './App.css'
 
 // ==========================================
@@ -23,10 +25,25 @@ interface VoiceStore {
 // ==========================================
 export const useVoice = create<VoiceStore>((set, get) => {
   const context = {
-    recognition: null as SpeechRecognition | null,
+    mediaRecorder: null as MediaRecorder | null,
+    mediaStream: null as MediaStream | null,
     segmentId: 0,
-    voice: createVoice<string>({
-      async* stream(chunk: Chunk<string>) { yield chunk.data },
+    voice: createVoice<Blob>({
+      async* stream(chunk: Chunk<Blob>) {
+        const base64 = await blobToBase64(chunk.data)
+        const response = await postQwenASRChatCompletions({
+          stream: true,
+          messages: [
+            {
+              role: 'user',
+              content: [
+                { type: 'audio_url', audio_url: { url: base64 } },
+              ],
+            },
+          ],
+        })
+        return streamASRResponse(response)
+      },
       onDelta: (delta: string) => set({ text: delta }),
       onFinal: (final: string) => set({ text: final }),
       deltaIdleMs: 50,
@@ -35,55 +52,50 @@ export const useVoice = create<VoiceStore>((set, get) => {
     }),
   }
 
-  function start() {
+  async function start() {
     get().stop()
 
-    const recognition = context.recognition = new window.SpeechRecognition()
-    recognition.lang = 'zh-CN'
-    recognition.continuous = true
-    recognition.interimResults = true
-
-    recognition.onstart = () => set({ status: 'recording' })
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let interimText = ''
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i]
-        const transcript = result[0].transcript
-        if (result.isFinal) {
+    try {
+      const mediaStream = context.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = context.mediaRecorder = new MediaRecorder(mediaStream, {
+        audioBitsPerSecond: 16000,
+      })
+      mediaRecorder.ondataavailable = (e: BlobEvent) => {
+        if (e.data.size > 0) {
           context.segmentId++
-          context.voice.feed({ data: transcript, id: context.segmentId })
-          // 收到 Final 时，清空当前的临时文本
-          interimText = ''
-        }
-        else {
-          interimText += transcript
+          context.voice.feed({ data: e.data, id: context.segmentId })
         }
       }
-      set({ interimText })
-    }
+      mediaRecorder.onstart = () => set({ status: 'recording' })
+      mediaRecorder.onstop = () => {
+        context.mediaStream?.getTracks().forEach(t => t.stop())
+        context.mediaStream = null
+        context.mediaRecorder = null
+        set({ status: 'idle', interimText: '' })
+      }
+      mediaRecorder.onerror = () => {
+        get().stop()
+        set({ status: 'idle', interimText: '' })
+      }
 
-    recognition.onend = () => {
-      context.recognition = null
-      set({ status: 'idle', interimText: '' })
+      mediaRecorder.start(1000)
+      set({ status: 'recording' })
     }
-    recognition.onerror = () => {
-      get().stop()
-      set({ status: 'idle', interimText: '' })
+    catch {
+      set({ status: 'idle' })
     }
-    recognition.start()
   }
 
   function stop() {
-    if (context.recognition) {
-      try {
-        context.recognition.stop()
-      }
-      catch {
-        // 捕获可能已经处于停止状态的 DOMException
-      }
-      context.recognition = null
+    if (context.mediaRecorder && context.mediaRecorder.state !== 'inactive') {
+      context.mediaRecorder.stop()
     }
-    set({ status: 'idle', interimText: '' })
+    else {
+      context.mediaStream?.getTracks().forEach(t => t.stop())
+      context.mediaStream = null
+      context.mediaRecorder = null
+      set({ status: 'idle', interimText: '' })
+    }
   }
 
   function clear() {
@@ -117,7 +129,7 @@ function App() {
   return (
     <section id="voice-demo">
       <h1>Voice Flow Demo</h1>
-      <p className="subtitle">Web Speech API (Zustand Local Closure)</p>
+      <p className="subtitle">Qwen3 ASR API (MediaRecorder + SSE)</p>
 
       <div className="controls">
         <button
@@ -139,10 +151,8 @@ function App() {
         <div className="output-text" style={{ whiteSpace: 'pre-wrap' }}>
           {!hasContent && <span className="placeholder">Waiting for speech input...</span>}
 
-          {/* 已固化的文本 */}
           {text && <span className="final-text">{text}</span>}
 
-          {/* 实时演进中的临时文本 */}
           {interimText && (
             <span className="interim">
               {' '}
